@@ -4,8 +4,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -14,11 +18,14 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener
-{ Button b1, b2 , b3, b4, b5, b6 , b7; EditText t1;
+{
+    private static final String CHANNEL_ID = "CH_1";
+    Button b1, b2 , b3, b4, b5, b6 , b7; EditText t1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        createNotificationChannel();
         setContentView(R.layout.activity_main);
         b1 = (Button) findViewById(R.id.b1);
         b2 = (Button) findViewById(R.id.b2);
@@ -35,16 +42,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         b6.setOnClickListener(this);
         b7.setOnClickListener(this); }
         private void SendNotification() {
-        NotificationCompat.Builder b = new NotificationCompat.Builder(this);
+        NotificationCompat.Builder b = new NotificationCompat.Builder(this,CHANNEL_ID);
+            Intent intent =new Intent(this,secondActivity.class);
+            /*PendingIntent pendingIntent = PendingIntent.getActivity(this,3,intent,)*/
         b.setAutoCancel(true) .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setWhen(System.currentTimeMillis())
-               // .setSmallIcon(R.drawable.web)
+                .setSmallIcon(R.drawable.ic_launcher_background)
                 .setTicker("Formation Android")
                 .setContentTitle("Notification")
                 .setContentText("bonjour mes collegues je suis heureux d'etre avec vous :).")
                 .setContentInfo("INFO");
         NotificationManager nm = (NotificationManager) this.getSystemService(this.NOTIFICATION_SERVICE);
         nm.notify(1, b.build()); }
+       private void createNotificationChannel(){
+           if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+               CharSequence name ="chaine1";
+               String description ="NOTIFICATION DU BOUTON ECRAN MULTIPLE 2";
+               int importance = NotificationManager.IMPORTANCE_DEFAULT;
+               NotificationChannel channel =new NotificationChannel(CHANNEL_ID,name,importance);
+               channel.setDescription(description);
+               NotificationManager notificationManager = getSystemService(NotificationManager.class);
+               notificationManager.createNotificationChannel(channel);
+           }
+}
         @Override public void onClick(View v) {
         switch(v.getId())
         {
